@@ -24,3 +24,10 @@ export const updateJoke = async (jokeObject) => {
     body: JSON.stringify(jokeObject),
   });
 };
+
+// new function to return a fetch call with the DELETE method
+export const deleteJoke = async (jokeObject) => {
+  return fetch(`http://localhost:8088/jokes/${jokeObject.id}`, {
+    method: "DELETE",
+  });
+};

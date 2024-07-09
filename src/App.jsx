@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { addJokeToAPI, getAllJokes, updateJoke } from "./services/jokeService";
+import {
+  addJokeToAPI,
+  deleteJoke,
+  getAllJokes,
+  updateJoke,
+} from "./services/jokeService";
 import stevePic from "./assets/steve.png";
 
 export const App = () => {
@@ -31,6 +36,7 @@ export const App = () => {
     setNewJoke(event.target.value);
   };
 
+  // function to handle submit
   const handleSubmit = async () => {
     if (newJoke === "") {
       return alert("Please enter a joke");
@@ -45,9 +51,19 @@ export const App = () => {
     }
   };
 
+  // function to toggle jokes
   const handleToggle = async (joke) => {
     const updatedJoke = { ...joke, told: !joke.told };
     await updateJoke(updatedJoke);
+    const updatedJokes = await getAllJokes();
+    setShowAllJokes(updatedJokes);
+    setUntoldJokes(updatedJokes.filter((joke) => joke.told === false));
+    setToldJokes(updatedJokes.filter((joke) => joke.told === true));
+  };
+
+  // function to delete jokes
+  const handleDelete = async (joke) => {
+    await deleteJoke(joke);
     const updatedJokes = await getAllJokes();
     setShowAllJokes(updatedJokes);
     setUntoldJokes(updatedJokes.filter((joke) => joke.told === false));
@@ -89,6 +105,9 @@ export const App = () => {
           {untoldJokes.map((joke) => (
             <li key={joke.id} className="joke-list-item">
               <p className="joke-list-item-text">{joke.text}</p>
+              <div className="joke-list-action-delete">
+                <button onClick={() => handleDelete(joke)}>🗑️</button>
+              </div>
               <div className="joke-list-action-toggle">
                 <button onClick={() => handleToggle(joke)}>🙁</button>
               </div>
@@ -105,6 +124,9 @@ export const App = () => {
         {toldJokes.map((joke) => (
           <li key={joke.id} className="joke-list-item">
             <p className="joke-list-item-text">{joke.text}</p>
+            <div className="joke-list-action-delete">
+              <button onClick={() => handleDelete(joke)}>🗑️</button>
+            </div>
             <div className="joke-list-action-toggle">
               <button onClick={() => handleToggle(joke)}>😊</button>
             </div>
